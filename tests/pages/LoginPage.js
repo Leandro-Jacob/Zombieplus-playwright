@@ -1,0 +1,34 @@
+const { expect } = require('@playwright/test');
+
+class LoginPage {
+
+    constructor(page) {
+        this.page = page;
+    }
+
+    async visit() {
+        await this.page.goto('http://localhost:3000/admin/login');
+
+        const LoginForm = this.page.locator('.login-form');
+        await expect(LoginForm).toBeVisible();
+    }
+
+    async submit(email, password) {
+        await this.page.getByPlaceholder('E-mail').fill(email);
+        await this.page.getByPlaceholder('Senha').fill(password);
+        await this.page.getByText('Entrar').click()
+    }
+
+    async isloggedIn() {
+        await this.page.waitForLoadState('networkidle')
+        await expect(this.page).toHaveURL('http://localhost:3000/admin/movies')
+    }
+
+    async alertHaveText(text) {
+        const alert = this.page.locator('span[class$=alert]')
+        await expect(alert).toHaveText(text)
+    }
+
+}
+
+module.exports = { LoginPage };
